@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -15,47 +10,81 @@ datasource db {
 }
 
 model User {
-  id        Int  @id  @default(autoincrement())
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id           String   @id @default(uuid())
+  name         String
+  email        String
+  password     String
+  zaps         Zap[]
+  otp          Int?
+  verify       Boolean  @default(false)
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
-model Task {
-  id        String    @id @default(uuid())
-  triggerId String   
+model Zap {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  triggerId String
   trigger   Trigger?
   actions   Action[]
+  zapRuns   ZapRun[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Trigger {
-  id                String               @id @default(uuid())
-  taskId            String               @unique
-  triggerId         String
-  type              triggerAvailability  @relation(fields: [triggerId], references: [id])
-  task              Task                 @relation(fields: [taskId], references: [id])
+  id        String           @id @default(uuid())
+  metadata  Json             @default("{}")
+  triggerId String
+  type      AvailableTrigger @relation(fields: [triggerId], references: [id])
+  zapId     String           @unique
+  zap       Zap              @relation(fields: [zapId], references: [id])
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }
 
-
-
+// Created by seed.ts
+model AvailableTrigger {
+  id       String    @id @default(uuid())
+  name     String
+  image    String
+  triggers Trigger[]
+}
 
 model Action {
-  id        String  @id @default(uuid())
-  taskId     String  
-  task       Task     @relation(fields: [taskId], references: [id])
-  actionId  String
-  type      AvailableAction @relation(fields: [actionId], references: [id])
+  id           String          @id @default(uuid())
+  metadata     Json            @default("{}")
+  zapId        String
+  zap          Zap             @relation(fields: [zapId], references: [id])
+  actionId     String
+  type         AvailableAction @relation(fields: [actionId], references: [id])
+  sortingOrder Int             @default(0)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 }
 
-
-model AvailableAction{
-  id String @id @default(uuid())
-  name String
-  action Action[]
+// Created by seed.ts
+model AvailableAction {
+  id      String   @id @default(uuid())
+  name    String
+  image   String
+  actions Action[]
 }
 
-model triggerAvailability{
-  id String @id @default(uuid())
-  name String
-  triggers Trigger[]
-} 
+model ZapRun {
+  id           String        @id @default(uuid())
+  zapId        String
+  zap          Zap           @relation(fields: [zapId], references: [id])
+  metadata     Json          @default("{}")
+  zapRunOutBox ZapRunOutbox?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model ZapRunOutbox {
+  id       String @id @default(uuid())
+  zapRunId String @unique
+  zapRun   ZapRun @relation(fields: [zapRunId], references: [id])
+}
