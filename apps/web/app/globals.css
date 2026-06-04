@@ -1,0 +1,119 @@
+@import "@xyflow/react/dist/style.css";
+@import "tailwindcss";
+
+/* ─── Custom theme tokens (ported from tailwind.config.cjs) ── */
+
+@theme {
+  --color-brand-gray: #1a1a1a;
+  --color-neon-green: #D5FF40;
+  --color-stone: #C0C2B8;
+  --color-dark-bg: #0A0A0A;
+
+  --font-family-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-family-syne: var(--font-syne), sans-serif;
+  --font-family-poppins: var(--font-poppins), sans-serif;
+}
+
+/* ─── Base resets ─────────────────────────────────────────── */
+
+html {
+  color-scheme: dark;
+  font-size: 16px;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────── */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ─── Smooth focus outline ────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid rgba(213, 255, 64, 0.6);
+  outline-offset: 2px;
+}
+
+/* ─── Selection ───────────────────────────────────────────── */
+
+::selection {
+  background: rgba(213, 255, 64, 0.18);
+  color: #fff;
+}
+
+/* ─── Dashboard animations ────────────────────────────── */
+
+@keyframes avatar-ring-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float-dust {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translateY(-12px) translateX(6px);
+    opacity: 0.8;
+  }
+}
+
+.animate-float-dust {
+  animation: float-dust var(--drift-duration, 8s) ease-in-out infinite;
+  animation-delay: var(--drift-delay, 0s);
+}
+
+/* ─── Builder: React Flow edge animation ──────────────── */
+
+@keyframes flowDash {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -36; }
+}
+
+/* ─── Builder: sidebar offset CSS variable ─────────────── */
+/* Sidebar is hidden on mobile, 256px (w-64) on lg+ */
+
+:root {
+  --builder-sidebar-offset: 0px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --builder-sidebar-offset: 256px;
+  }
+}
