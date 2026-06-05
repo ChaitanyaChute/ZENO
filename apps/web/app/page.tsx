@@ -1,20 +1,17 @@
 import {
-  Hero,
-  Features,
-  Pricing,
   Enterprise,
+  Features,
   Footer,
+  Hero,
+  Pricing,
 } from "@/components/landingpage";
-import TemplateLauncher from "@/components/landingpage/TemplateLauncher";
 
 export default function Home() {
   return (
-    <main className="bg-black text-white">
+    <main className="bg-canvas text-ink">
       <Hero />
       <Features />
-      <TemplateLauncher />
       <Pricing />
-      <Enterprise />
       <Footer />
     </main>
   );
