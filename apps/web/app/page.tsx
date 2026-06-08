@@ -1,17 +1,23 @@
-import {
-  Enterprise,
-  Features,
-  Footer,
-  Hero,
-  Pricing,
-} from "@/components/landingpage";
+import { Navbar } from "@/components/landing/navbar";
+import { Hero } from "@/components/landing/hero";
+import { Features } from "@/components/landing/features";
+import { StepperSection } from "@/components/landing/stepper-section";
+import { Pricing } from "@/components/landing/pricing";
+import { CTA } from "@/components/landing/cta";
+import { Footer } from "@/components/landing/footer";
 
-export default function Home() {
+export default function LandingPage() {
+
   return (
-    <main className="bg-canvas text-ink">
+    <main className="min-h-screen bg-neutral-950 text-white">
+      <Navbar />
       <Hero />
+      <div className="py-24" />
+      <StepperSection />
       <Features />
+      
       <Pricing />
+      <CTA />
       <Footer />
     </main>
   );
