@@ -1,11 +1,11 @@
-import { forwardRef } from "react";
+import React, { forwardRef } from "react";
 import { Handle, type HandleProps } from "@xyflow/react";
 
 import { cn } from "@/lib/utils";
 
 export type BaseHandleProps = HandleProps;
 
-export const BaseHandle = forwardRef<HTMLDivElement, BaseHandleProps>(
+export const BaseHandle: React.FC<BaseHandleProps & React.RefAttributes<HTMLDivElement>> = forwardRef<HTMLDivElement, BaseHandleProps>(
   ({ className, children, ...props }, ref) => {
     return (
       <Handle
