@@ -22,10 +22,6 @@
 
 
 
-import { useTRPC } from "@/lib/trpc/client"
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useExecutionsParams } from "./use-executions-params";
-
 /**
  * Hook to fetch all executions using suspense
  */
@@ -46,7 +42,7 @@ export const useSuspenseExecutions = () => {
 
 export const useSuspenseExecution = (_id: string) => {
   return {
-    data: null,
+    data: {} as any,
     isFetching: false,
   };
 };

@@ -104,7 +104,7 @@ function getPrimaryColor(): Vec3 {
 
   ctx.fillStyle = style;
   ctx.fillRect(0, 0, 1, 1);
-  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+  const [r = 0, g = 0, b = 0] = Array.from(ctx.getImageData(0, 0, 1, 1).data);
 
   return new Vec3(r / 255, g / 255, b / 255);
 }

@@ -51,6 +51,7 @@ interface CustomNodeData {
   title: string;
   icon: React.ReactNode;
   status: NodeStatus;
+  [key: string]: unknown;
 }
 
 const WorkflowNode = ({ data }: { data: CustomNodeData }) => {

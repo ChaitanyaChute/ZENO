@@ -14,15 +14,22 @@ import {
   LoadingView,
 } from "@/components/entity-components";
 import { RelativeTime } from "@/components/relative-time";
-import type { Workflow } from "@/generated/prisma";
 import { useEntitySearch } from "@/hooks/use-entity-search";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
 import {
   useCreateWorkflow,
   useRemoveWorkflow,
   useSuspenseWorkflows,
-} from "../hooks/use-workflows";
-import { useWorkflowsParams } from "../hooks/use-workflows-params";
+} from "@/hooks/workflow/use-workflows";
+import { useWorkflowsParams } from "@/hooks/workflow/use-workflows-params";
+
+export type Workflow = {
+  id: string;
+  name: string;
+  updatedAt: string;
+  createdAt: string;
+  [key: string]: any;
+};
 
 export const WorkflowsSearch = () => {
   const [params, setParams] = useWorkflowsParams();
@@ -46,8 +53,8 @@ export const WorkflowsList = () => {
   return (
     <EntityList
       items={workflows.data.items}
-      getKey={(workflow) => workflow.id}
-      renderItem={(workflow) => <WorkflowItem data={workflow} />}
+      getKey={(workflow: Workflow) => workflow.id}
+      renderItem={(workflow: Workflow) => <WorkflowItem data={workflow} />}
       emptyView={<WorkflowsEmpty />}
     />
   );
@@ -60,10 +67,10 @@ export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
 
   const handleCreate = () => {
     createWorkflow.mutate(undefined, {
-      onSuccess: (data) => {
+      onSuccess: (data: any) => {
         router.push(`/workflows/${data.id}`);
       },
-      onError: (error) => {
+      onError: (error: any) => {
         handleError(error);
       },
     });
@@ -129,10 +136,10 @@ export const WorkflowsEmpty = () => {
 
   const handleCreate = () => {
     createWorkflow.mutate(undefined, {
-      onError: (error) => {
+      onError: (error: any) => {
         handleError(error);
       },
-      onSuccess: (data) => {
+      onSuccess: (data: any) => {
         router.push(`/workflows/${data.id}`);
       },
     });

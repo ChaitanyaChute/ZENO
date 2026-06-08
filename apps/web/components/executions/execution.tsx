@@ -104,10 +104,7 @@ export const ExecutionView = ({
             </div>
           ) : null}
 
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">Event ID</p>
-            <p className="text-sm">{execution.inngestEventId}</p>
-          </div>
+
           </div>
           {execution.error && (
             <div className="mt-6 p-4 bg-red-50 rounded-md space-y-3">

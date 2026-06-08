@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Provider } from 'jotai'
-import { TRPCReactProvider } from "@/lib/trpc/client";
 import { Toaster } from "components/ui/sonner";
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 

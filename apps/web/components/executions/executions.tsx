@@ -181,6 +181,7 @@ interface Execution {
   status: ExecutionStatus;
   startedAt: Date | string;
   completedAt: Date | string | null;
+  workflow: { id: string; name: string; };
 }
 
 export const ExecutionsList = () => {
@@ -189,8 +190,8 @@ export const ExecutionsList = () => {
   return (
     <EntityList
       items={executions.data.items}
-      getKey={(execution) => execution.id}
-      renderItem={(execution) => <ExecutionItem data={execution} />}
+      getKey={(execution: Execution) => execution.id}
+      renderItem={(execution: Execution) => <ExecutionItem data={execution} />}
       emptyView={<ExecutionsEmpty />}
     />
   );
