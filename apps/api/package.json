@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "tsx watch src/app.ts",
     "build": "tsc --noEmit",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+      "start": "tsx src/app.ts"
   },
   "dependencies": {
     "@repo/database": "workspace:*",
