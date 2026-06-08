@@ -16,5 +16,8 @@
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18"
+  },
+  "resolutions": {
+    "kysely": "0.28.1"
   }
 }
