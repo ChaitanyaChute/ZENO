@@ -1,0 +1,51 @@
+{
+  "name": "@repo/integrations",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./anthropic": {
+      "types": "./anthropic/anthropic.ts",
+      "default": "./anthropic/anthropic.ts"
+    },
+    "./discord": {
+      "types": "./discord/discord.ts",
+      "default": "./discord/discord.ts"
+    },
+    "./gemini": {
+      "types": "./gemini/gemini.ts",
+      "default": "./gemini/gemini.ts"
+    },
+    "./google/form-trigger": {
+      "types": "./google/google-form-trigger.ts",
+      "default": "./google/google-form-trigger.ts"
+    },
+    "./http-request": {
+      "types": "./http-request/index.ts",
+      "default": "./http-request/index.ts"
+    },
+    "./manual-trigger": {
+      "types": "./manual-trigger/index.ts",
+      "default": "./manual-trigger/index.ts"
+    },
+    "./openai": {
+      "types": "./openai/openai.ts",
+      "default": "./openai/openai.ts"
+    },
+    "./slack": {
+      "types": "./slack/slack.ts",
+      "default": "./slack/slack.ts"
+    },
+    "./stripe/trigger": {
+      "types": "./stripe/trigger.ts",
+      "default": "./stripe/trigger.ts"
+    }
+  },
+  "dependencies": {
+    "@inngest/realtime": "^0.4.7"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "5.9.2"
+  }
+}

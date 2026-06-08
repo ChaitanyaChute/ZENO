@@ -1,0 +1,35 @@
+{
+  "name": "@repo/workflow-engine",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./engine": {
+      "types": "./src/engine/registry.ts",
+      "default": "./src/engine/registry.ts"
+    },
+    "./registry/node-registry": {
+      "types": "./src/registry/node-registry.ts",
+      "default": "./src/registry/node-registry.ts"
+    },
+    "./types": {
+      "types": "./src/types/index.ts",
+      "default": "./src/types/index.ts"
+    },
+    "./utils": {
+      "types": "./src/utils/index.ts",
+      "default": "./src/utils/index.ts"
+    }
+  },
+  "dependencies": {
+    "@inngest/realtime": "^0.4.7",
+    "@repo/database": "workspace:*",
+    "@repo/shared": "workspace:*",
+    "inngest": "^3.49.0",
+    "toposort": "^2.0.2"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "5.9.2"
+  }
+}
