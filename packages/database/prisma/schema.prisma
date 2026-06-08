@@ -10,81 +10,153 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  name         String
-  email        String
-  password     String
-  zaps         Zap[]
-  otp          Int?
-  verify       Boolean  @default(false)
-  refreshToken String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  
+  refreshTokens RefreshToken[]
+  accounts      OAuthAccount[]
+  workflows     Workflow[]
+  credentials   Credential[]
+
+  @@map("user")
 }
 
-model Zap {
-  id        String   @id @default(uuid())
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  triggerId String
-  trigger   Trigger?
-  actions   Action[]
-  zapRuns   ZapRun[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_token")
+}
+
+model OAuthAccount {
+  id                String @id @default(cuid())
+  provider          String
+  providerAccountId String
+  userId            String
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([provider, providerAccountId])
+  @@map("oauth_account")
+}
+
+model Credential {
+  id String @id @default(cuid())
+  name String
+  value String
+  type CredentialType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  Node Node[]
+}
+
+enum CredentialType {
+  OPENAI
+  ANTHROPIC
+  GEMINI
+}
+
+model Workflow {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  nodes Node[]
+  connections Connection[]
+  executions Execution[]
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum NodeType {
+  INITIAL
+  MANUAL_TRIGGER
+  HTTP_REQUEST
+  GOOGLE_FORM_TRIGGER
+  STRIPE_TRIGGER
+  ANTHROPIC
+  GEMINI
+  OPENAI
+  DISCORD
+  SLACK
+}
+
+model Node {
+  id String @id @default(cuid())
+  workflowId String
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  name String
+  type NodeType
+  position Json
+  data Json @default("{}")
+
+  credentialId String?
+  credential Credential? @relation(fields: [credentialId], references: [id])
+
+  outputConnections Connection[] @relation("FromNode")
+  inputConnections Connection[] @relation("ToNode")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Trigger {
-  id        String           @id @default(uuid())
-  metadata  Json             @default("{}")
-  triggerId String
-  type      AvailableTrigger @relation(fields: [triggerId], references: [id])
-  zapId     String           @unique
-  zap       Zap              @relation(fields: [zapId], references: [id])
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
+model Connection {
+  id String @id @default(cuid())
+  workflowId String
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  fromNodeId String
+  fromNode Node @relation("FromNode", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNodeId String
+  toNode Node @relation("ToNode", fields: [toNodeId], references: [id], onDelete: Cascade)
+
+  fromOutput String @default("main")
+  toInput String @default("main")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([fromNodeId, toNodeId, fromOutput, toInput])
 }
 
-// Created by seed.ts
-model AvailableTrigger {
-  id       String    @id @default(uuid())
-  name     String
-  image    String
-  triggers Trigger[]
+enum ExecutionStatus {
+  RUNNING
+  SUCCESS
+  FAILED
 }
 
-model Action {
-  id           String          @id @default(uuid())
-  metadata     Json            @default("{}")
-  zapId        String
-  zap          Zap             @relation(fields: [zapId], references: [id])
-  actionId     String
-  type         AvailableAction @relation(fields: [actionId], references: [id])
-  sortingOrder Int             @default(0)
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-}
+model Execution {
+  id String @id @default(cuid())
 
-// Created by seed.ts
-model AvailableAction {
-  id      String   @id @default(uuid())
-  name    String
-  image   String
-  actions Action[]
-}
+  workflowId String
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
-model ZapRun {
-  id           String        @id @default(uuid())
-  zapId        String
-  zap          Zap           @relation(fields: [zapId], references: [id])
-  metadata     Json          @default("{}")
-  zapRunOutBox ZapRunOutbox?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-}
+  status ExecutionStatus @default(RUNNING)
+  error String? @db.Text
+  errorStack String? @db.Text
 
-model ZapRunOutbox {
-  id       String @id @default(uuid())
-  zapRunId String @unique
-  zapRun   ZapRun @relation(fields: [zapRunId], references: [id])
+  startedAt DateTime @default(now())
+  completedAt DateTime?
+
+  inngestEventId String @unique
+
+  output Json?
 }
