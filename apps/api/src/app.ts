@@ -18,7 +18,9 @@ import { stripeWebhookRoutes } from "./routes/webhooks/stripe.route.js";
 export const app = express();
 
 app.use(cors({
-  origin: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  origin: function (origin, callback) {
+    callback(null, origin || true);
+  },
   credentials: true,
 }));
 app.use(express.json());
