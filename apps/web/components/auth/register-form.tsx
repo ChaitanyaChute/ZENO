@@ -51,16 +51,16 @@ export function RegisterForm() {
   });
 
   const signInGithub = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/github`;
+    window.location.href = "/api/auth/github";
   };
 
   const signInGoogle = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/google`;
+    window.location.href = "/api/auth/google";
   };
 
   const onSubmit = async (values: RegisterFormValues) => {
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/register`, values, {
+      const res = await axios.post("/api/auth/register", values, {
         withCredentials: true,
       });
       if (res.data.success) {
@@ -97,7 +97,7 @@ export function RegisterForm() {
                     disabled={isPending}
                     asChild
                   >
-                    <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/github`}>
+                    <a href="/api/auth/github">
                       <Image alt="GitHub" src="/logos/github.svg" width={20} height={20} />
                       Continue with GitHub
                     </a>
@@ -109,7 +109,7 @@ export function RegisterForm() {
                     disabled={isPending}
                     asChild
                   >
-                    <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/google`}>
+                    <a href="/api/auth/google">
                       <Image alt="Google" src="/logos/google.svg" width={20} height={20} />
                       Continue with Google
                     </a>

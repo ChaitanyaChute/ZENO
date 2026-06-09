@@ -3,10 +3,10 @@ import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-q
 import { toast } from "sonner";
 import { useWorkflowsParams } from "./use-workflows-params";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = "/api";
 
 const apiClient = axios.create({
-  baseURL: `${API_URL}/api`,
+  baseURL: "/api/workflows",
   withCredentials: true,
 });
 

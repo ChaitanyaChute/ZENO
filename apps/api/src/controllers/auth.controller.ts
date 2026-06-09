@@ -149,7 +149,7 @@ export const me = async (req: Request, res: Response) => {
 
 // Google OAuth
 export const googleUrl = (req: Request, res: Response) => {
-  const redirectUri = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/google/callback`;
+  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/google/callback`;
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=email profile`;
   res.redirect(url);
 };
@@ -157,7 +157,7 @@ export const googleUrl = (req: Request, res: Response) => {
 export const googleCallback = async (req: Request, res: Response) => {
   try {
     const { code } = req.query;
-    const redirectUri = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/google/callback`;
+    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/google/callback`;
     
     const tokenRes = await axios.post("https://oauth2.googleapis.com/token", {
       client_id: process.env.GOOGLE_CLIENT_ID,
@@ -204,7 +204,7 @@ export const googleCallback = async (req: Request, res: Response) => {
 
 // Github OAuth
 export const githubUrl = (req: Request, res: Response) => {
-  const redirectUri = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/github/callback`;
+  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/github/callback`;
   const url = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${redirectUri}&scope=user:email`;
   res.redirect(url);
 };
