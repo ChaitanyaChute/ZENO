@@ -144,10 +144,9 @@ export const Footer = () => {
                             </div>
                             <div className="flex flex-col">
                                 <h3 className="font-caveat text-[24px] font-semibold italic text-[#9ca3af] mb-[18px]">Company</h3>
-                                <Link href="#" className="block font-dm text-[14px] font-semibold text-neutral-300 mb-[14px] hover:text-white transition-colors duration-200">Blog</Link>
-                                <Link href="#" className="block font-dm text-[14px] font-semibold text-neutral-300 mb-[14px] hover:text-white transition-colors duration-200">About</Link>
-                                <Link href="#" className="block font-dm text-[14px] font-semibold text-neutral-300 mb-[14px] hover:text-white transition-colors duration-200">Terms and Condition</Link>
-                                <Link href="#" className="block font-dm text-[14px] font-semibold text-neutral-300 mb-[14px] hover:text-white transition-colors duration-200">Privacy Policy</Link>
+                                <Link href="/about" className="block font-dm text-[14px] font-semibold text-neutral-300 mb-[14px] hover:text-white transition-colors duration-200">About</Link>
+                                <Link href="/terms-and-conditions" className="block font-dm text-[14px] font-semibold text-neutral-300 mb-[14px] hover:text-white transition-colors duration-200">Terms and Condition</Link>
+                                <Link href="/privacy-policy" className="block font-dm text-[14px] font-semibold text-neutral-300 mb-[14px] hover:text-white transition-colors duration-200">Privacy Policy</Link>
                             </div>
                         </div>
 
