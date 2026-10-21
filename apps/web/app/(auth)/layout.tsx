@@ -15,7 +15,10 @@ const Layout = async ({ children }: { children: React.ReactNode; }) => {
     if (res.ok) {
       redirect("/workflows");
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.digest?.startsWith?.("NEXT_REDIRECT")) {
+      throw error;
+    }
     // If error, means backend is down or token invalid. Either way, stay on login page.
   }
 

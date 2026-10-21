@@ -13,9 +13,18 @@ const generateTokens = (userId: string) => {
   return { accessToken, refreshToken };
 };
 
-const setCookies = (res: Response, accessToken: string, refreshToken: string) => {
-  const isProduction = process.env.NODE_ENV === "production";
+const getCookieConfig = () => {
+  const isProduction =
+    process.env.NODE_ENV === "production" ||
+    process.env.RENDER === "true" ||
+    Boolean(process.env.COOKIE_DOMAIN) ||
+    Boolean(process.env.NEXT_PUBLIC_APP_URL?.startsWith("https"));
   const cookieDomain = process.env.COOKIE_DOMAIN || (isProduction ? ".chait8nya.me" : undefined);
+  return { isProduction, cookieDomain };
+};
+
+const setCookies = (res: Response, accessToken: string, refreshToken: string) => {
+  const { isProduction, cookieDomain } = getCookieConfig();
 
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
@@ -111,10 +120,12 @@ export const refresh = async (req: Request, res: Response) => {
     const decoded = jwt.verify(refreshToken, REFRESH_SECRET) as { userId: string };
     const { accessToken } = generateTokens(decoded.userId);
 
+    const { isProduction, cookieDomain } = getCookieConfig();
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction,
       sameSite: "lax",
+      domain: cookieDomain,
       maxAge: 15 * 60 * 1000,
     });
 
@@ -131,10 +142,12 @@ export const logout = async (req: Request, res: Response) => {
     await prisma.refreshToken.deleteMany({ where: { token: refreshToken } });
   }
   
+  const { isProduction, cookieDomain } = getCookieConfig();
   const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
     sameSite: "lax" as const,
+    domain: cookieDomain,
   };
   
   res.clearCookie("accessToken", cookieOptions);
@@ -190,7 +203,7 @@ export const googleCallback = async (req: Request, res: Response) => {
       user = await prisma.user.create({
         data: {
           email: profile.email,
-          name: profile.name,
+          name: profile.name || profile.email.split("@")[0],
           image: profile.picture,
         }
       });
