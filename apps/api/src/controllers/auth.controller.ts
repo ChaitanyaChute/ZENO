@@ -14,17 +14,22 @@ const generateTokens = (userId: string) => {
 };
 
 const setCookies = (res: Response, accessToken: string, refreshToken: string) => {
+  const isProduction = process.env.NODE_ENV === "production";
+  const cookieDomain = process.env.COOKIE_DOMAIN || (isProduction ? ".chait8nya.me" : undefined);
+
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
     sameSite: "lax",
+    domain: cookieDomain,
     maxAge: 15 * 60 * 1000, // 15 mins
   });
   
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
     sameSite: "lax",
+    domain: cookieDomain,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 };
@@ -126,8 +131,14 @@ export const logout = async (req: Request, res: Response) => {
     await prisma.refreshToken.deleteMany({ where: { token: refreshToken } });
   }
   
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+  };
+  
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
   res.json({ success: true });
 };
 
@@ -149,7 +160,8 @@ export const me = async (req: Request, res: Response) => {
 
 // Google OAuth
 export const googleUrl = (req: Request, res: Response) => {
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/google/callback`;
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
+  const redirectUri = `${appUrl}/api/auth/google/callback`;
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=email profile`;
   res.redirect(url);
 };
@@ -157,7 +169,8 @@ export const googleUrl = (req: Request, res: Response) => {
 export const googleCallback = async (req: Request, res: Response) => {
   try {
     const { code } = req.query;
-    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/google/callback`;
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
+    const redirectUri = `${appUrl}/api/auth/google/callback`;
     
     const tokenRes = await axios.post("https://oauth2.googleapis.com/token", {
       client_id: process.env.GOOGLE_CLIENT_ID,
@@ -204,7 +217,8 @@ export const googleCallback = async (req: Request, res: Response) => {
 
 // Github OAuth
 export const githubUrl = (req: Request, res: Response) => {
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/auth/github/callback`;
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
+  const redirectUri = `${appUrl}/api/auth/github/callback`;
   const url = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${redirectUri}&scope=user:email`;
   res.redirect(url);
 };
