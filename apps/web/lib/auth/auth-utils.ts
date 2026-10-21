@@ -1,10 +1,20 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+export function getApiUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "");
+  }
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+    return "https://api.zeno.chait8nya.me";
+  }
+  return "http://localhost:3001";
+}
+
 export async function requireAuth() {
   const reqHeaders = await headers();
   const cookieStr = reqHeaders.get("cookie") || "";
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const apiUrl = getApiUrl();
 
   try {
     const res = await fetch(`${apiUrl}/api/auth/me`, {
@@ -31,7 +41,7 @@ export async function requireAuth() {
 export async function requireUnauth() {
   const reqHeaders = await headers();
   const cookieStr = reqHeaders.get("cookie") || "";
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const apiUrl = getApiUrl();
 
   try {
     const res = await fetch(`${apiUrl}/api/auth/me`, {

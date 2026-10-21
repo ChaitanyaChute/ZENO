@@ -178,6 +178,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { WorkflowGenerator } from "@/components/workflow-generator";
 import { formatDistanceToNow } from "date-fns";
+import { getApiUrl } from "@/lib/auth/auth-utils";
 
 const Page = async () => {
   const reqHeaders = await headers();
@@ -185,7 +186,8 @@ const Page = async () => {
 
   let workflows: any[] = [];
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/workflows`, {
+    const apiUrl = getApiUrl();
+    const res = await fetch(`${apiUrl}/api/workflows`, {
       headers: { cookie: cookieStr },
       cache: "no-store",
     });

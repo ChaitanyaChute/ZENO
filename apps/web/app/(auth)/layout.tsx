@@ -1,13 +1,15 @@
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getApiUrl } from "@/lib/auth/auth-utils";
 
 const Layout = async ({ children }: { children: React.ReactNode; }) => {
   const reqHeaders = await headers();
   const cookieStr = reqHeaders.get('cookie') || '';
+  const apiUrl = getApiUrl();
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/me`, {
+    const res = await fetch(`${apiUrl}/api/auth/me`, {
       headers: { cookie: cookieStr },
       cache: 'no-store'
     });
