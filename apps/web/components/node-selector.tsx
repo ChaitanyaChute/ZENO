@@ -293,12 +293,6 @@ const triggerNodes: NodeTypeOption[] = [
     description: "Runs when a Google Form is submitted",
     icon: "/logos/googleform.svg",
   },
-  {
-    type: NodeType.STRIPE_TRIGGER,
-    label: "Stripe Event",
-    description: "Runs when a Stripe event occurs",
-    icon: "/logos/stripe.svg",
-  },
 ];
 
 const executionNodes: NodeTypeOption[] = [
@@ -339,48 +333,41 @@ const executionNodes: NodeTypeOption[] = [
     icon: "/logos/slack.svg",
   },
   {
-  type: NodeType.GMAIL,
-  label: "Gmail",
-  description: "Send an email using Gmail",
-  icon: "/logos/gmail.svg",
+    type: NodeType.GMAIL,
+    label: "Gmail",
+    description: "Send an email using Gmail",
+    icon: "/logos/gmail.svg",
   },
   {
-  type: NodeType.NOTION,
-  label: "Notion",
-  description: "Create and update Notion pages",
-  icon: "/logos/notion.svg",
-},
-{
-  type: NodeType.GOOGLE_DOCS,
-  label: "Google Docs",
-  description: "Create and update Google Docs",
-  icon: "/logos/google-docs.svg",
-},
-{
-  type: NodeType.POSTGRESQL,
-  label: "PostgreSQL",
-  description: "Execute PostgreSQL queries",
-  icon: "/logos/postgresql.svg",
-},
-{
-  type: NodeType.RAZORPAY,
-  label: "Razorpay",
-  description: "Create payments and manage transactions",
-  icon: "/logos/razorpay.svg",
-},
-{
-  type: NodeType.TELEGRAM,
-  label: "Telegram",
-  description: "Send Telegram messages",
-  icon: "/logos/telegram.svg",
-},
-{
-  type: NodeType.MONGODB,
-  label: "MongoDB",
-  description: "Read and write MongoDB documents",
-  icon: "/logos/mongodb.svg",
-},
-  
+    type: NodeType.NOTION,
+    label: "Notion",
+    description: "Create and update Notion pages",
+    icon: "/logos/notion.svg",
+  },
+  {
+    type: NodeType.GOOGLE_DOCS,
+    label: "Google Docs",
+    description: "Create and update Google Docs",
+    icon: "/logos/google-docs.svg",
+  },
+  {
+    type: NodeType.POSTGRESQL,
+    label: "PostgreSQL",
+    description: "Execute PostgreSQL queries",
+    icon: "/logos/postgresql.svg",
+  },
+  {
+    type: NodeType.TELEGRAM,
+    label: "Telegram",
+    description: "Send Telegram messages",
+    icon: "/logos/telegram.svg",
+  },
+  {
+    type: NodeType.MONGODB,
+    label: "MongoDB",
+    description: "Read and write MongoDB documents",
+    icon: "/logos/mongodb.svg",
+  },
 ];
 
 interface NodeSelectorProps {

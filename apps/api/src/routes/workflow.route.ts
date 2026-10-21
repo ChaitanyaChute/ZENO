@@ -11,3 +11,4 @@ workflowRoutes.put("/:id", asyncHandler(workflowController.update));
 workflowRoutes.delete("/:id", asyncHandler(workflowController.remove));
 workflowRoutes.patch("/:id/name", asyncHandler(workflowController.updateName));
 workflowRoutes.post("/:id/execute", asyncHandler(workflowController.execute));
+workflowRoutes.post("/:id/generate", asyncHandler(workflowController.generate));

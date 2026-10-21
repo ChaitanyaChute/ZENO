@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { ZodError } from "zod";
 
-export type AsyncHandler = (request: Request, response: Response) => Promise<void>;
+export type AsyncHandler = (request: Request, response: Response) => Promise<unknown>;
 
 export const asyncHandler = (handler: AsyncHandler) => {
   return (request: Request, response: Response) => {
@@ -27,6 +27,11 @@ export const sendError = (response: Response, error: unknown) => {
 
   if (error instanceof Error && error.name === "NotFoundError") {
     response.status(404).json({ error: error.message });
+    return;
+  }
+
+  if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
+    response.status(404).json({ error: "Record not found" });
     return;
   }
 

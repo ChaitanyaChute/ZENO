@@ -61,12 +61,12 @@ const NodeType = {
   DISCORD: "DISCORD",
   SLACK: "SLACK",
   GMAIL: "GMAIL",
-  NOTION: "NOTION",
-  TELEGRAM: "TELEGRAM",
-  POSTGRESQL: "POSTGRESQL",
-  MONGODB: "MONGODB",
-  GOOGLE_DOCS: "GOOGLE_DOCS", 
-  RAZORPAY: "RAZORPAY",
+  NOTION_ACTION: "NOTION_ACTION",
+  TELEGRAM_ACTION: "TELEGRAM_ACTION",
+  POSTGRES_ACTION: "POSTGRES_ACTION",
+  MONGO_ACTION: "MONGO_ACTION",
+  GOOGLE_DOCS_ACTION: "GOOGLE_DOCS_ACTION", 
+  RAZORPAY_ACTION: "RAZORPAY_ACTION",
 } as const;
 
 export const nodeComponents: NodeTypes = {
@@ -81,12 +81,12 @@ export const nodeComponents: NodeTypes = {
   [NodeType.DISCORD]: DiscordNode,
   [NodeType.SLACK]: SlackNode, 
   [NodeType.GMAIL]: GmailNode, 
-  [NodeType.NOTION]: NotionNode, 
-  [NodeType.TELEGRAM]: TelegramNode, 
-  [NodeType.POSTGRESQL]: PostgreSQLNode, 
-  [NodeType.MONGODB]: MongoDBNode, 
-  [NodeType.GOOGLE_DOCS]: GoogleDocsNode, 
-  [NodeType.RAZORPAY]: RazorpayNode, 
+  [NodeType.NOTION_ACTION]: NotionNode, 
+  [NodeType.TELEGRAM_ACTION]: TelegramNode, 
+  [NodeType.POSTGRES_ACTION]: PostgreSQLNode, 
+  [NodeType.MONGO_ACTION]: MongoDBNode, 
+  [NodeType.GOOGLE_DOCS_ACTION]: GoogleDocsNode, 
+  [NodeType.RAZORPAY_ACTION]: RazorpayNode, 
 
 };
 

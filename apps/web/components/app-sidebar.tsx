@@ -174,6 +174,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import axios from "axios";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -339,9 +340,15 @@ export const AppSidebar = ({ user }: { user?: { name: string; email: string; ima
                 <DropdownMenuSeparator className="bg-neutral-800" />
                 <DropdownMenuItem 
                   className="cursor-pointer hover:bg-neutral-800 focus:bg-neutral-800 focus:text-white text-red-400 focus:text-red-400"
-                  onClick={() => {
-                    toast.success("Signed out");
-                    router.push("/login");
+                  onClick={async () => {
+                    try {
+                      await axios.post("/api/auth/logout", {}, { withCredentials: true });
+                    } catch (e) {
+                      console.error("Logout error", e);
+                    } finally {
+                      toast.success("Signed out");
+                      router.push("/login");
+                    }
                   }}
                 >
                   <LogOutIcon className="mr-2 h-4 w-4" />

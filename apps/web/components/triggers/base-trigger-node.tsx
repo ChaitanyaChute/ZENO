@@ -72,7 +72,7 @@ export const BaseTriggerNode = memo(
               )}
               {children}
               <BaseHandle
-                id="source-1"
+                id="main"
                 type="source"
                 position={Position.Right}
               />

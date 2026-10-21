@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { AnimatedStepper, Step } from "@/components/ui/animated-stepper";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { AnimatedStepper, Step, useStepper } from "@/components/ui/animated-stepper";
 import { Container } from "@/components/ui/container";
 import { motion, AnimatePresence } from "framer-motion";
 import { Target, CheckCircle2, Loader2, Play, RotateCcw, X } from "lucide-react";
@@ -15,21 +15,35 @@ const Step1Content = () => {
   const fullText = "When a Stripe payment succeeds:\n1. Store customer information in PostgreSQL.\n2. Store transaction details in MongoDB.\n3. Generate a welcome email using OpenAI.\n4. Send the email through Gmail.\n5. Create a customer onboarding page in Notion.\n6. Create a welcome document in Google Docs.\n7. Notify the sales team in Telegram.\n8. Notify the finance team in Slack.\n9. Notify support in Discord.";
   const [text, setText] = useState("");
   const [isTyping, setIsTyping] = useState(true);
+  const { nextStep } = useStepper();
 
   useEffect(() => {
     let index = 0;
     setText("");
     setIsTyping(true);
+    let triggeredNextStep = false;
+    
+    const targetText = "8. Notify the finance team in Slack.";
+    const targetIndex = fullText.indexOf(targetText) + targetText.length;
+
     const interval = setInterval(() => {
       setText(fullText.slice(0, index));
       index++;
+      
+      if (!triggeredNextStep && index === targetIndex) {
+        triggeredNextStep = true;
+        setTimeout(() => {
+          nextStep();
+        }, 800);
+      }
+
       if (index > fullText.length) {
         clearInterval(interval);
         setIsTyping(false);
       }
-    }, 20);
+    }, 5);
     return () => clearInterval(interval);
-  }, []);
+  }, [nextStep]);
 
   return (
     <div className="h-64 w-full rounded-2xl bg-neutral-900 border border-neutral-800 flex items-start p-6 shadow-inner overflow-hidden">
@@ -138,6 +152,7 @@ const FlowCanvas = () => {
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
   const [isExecuting, setIsExecuting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const isExecutingRef = useRef(false);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -148,13 +163,6 @@ const FlowCanvas = () => {
     (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     []
   );
-
-  const resetCanvas = useCallback(() => {
-    setNodes(initialNodes);
-    setEdges(initialEdges);
-    setIsExecuting(false);
-    setIsComplete(false);
-  }, []);
 
   const nodeTypes = useMemo(() => ({ workflow: WorkflowNode }), []);
 
@@ -169,38 +177,56 @@ const FlowCanvas = () => {
   }, []);
 
   const runWorkflow = useCallback(async () => {
-    if (isExecuting) return;
+    if (isExecutingRef.current) return;
+    isExecutingRef.current = true;
     setIsExecuting(true);
     setIsComplete(false);
     
     setNodes(initialNodes);
+    setEdges(initialEdges);
     
     // 1. Stripe
-    await executeNode("stripe", 1000);
+    await executeNode("stripe", 300);
     
     // 2. PG, Mongo, OpenAI parallel
     await Promise.all([
-      executeNode("pg", 1200),
-      executeNode("mongo", 1400),
-      executeNode("openai", 1600)
+      executeNode("pg", 350),
+      executeNode("mongo", 400),
+      executeNode("openai", 450)
     ]);
     
     // 3. Docs, Notion, Gmail parallel
     await Promise.all([
-      executeNode("docs", 1200),
-      executeNode("notion", 1000),
-      executeNode("gmail", 1400)
+      executeNode("docs", 350),
+      executeNode("notion", 300),
+      executeNode("gmail", 400)
     ]);
     
     // 4. Telegram, Discord
     await Promise.all([
-      executeNode("telegram", 1000),
-      executeNode("discord", 1200)
+      executeNode("telegram", 300),
+      executeNode("discord", 350)
     ]);
 
+    isExecutingRef.current = false;
     setIsExecuting(false);
     setIsComplete(true);
-  }, [executeNode, isExecuting]);
+  }, [executeNode]);
+
+  useEffect(() => {
+    runWorkflow();
+  }, [runWorkflow]);
+
+  const resetCanvas = useCallback(() => {
+    setNodes(initialNodes);
+    setEdges(initialEdges);
+    isExecutingRef.current = false;
+    setIsExecuting(false);
+    setIsComplete(false);
+    setTimeout(() => {
+      runWorkflow();
+    }, 500);
+  }, [runWorkflow]);
 
   // Compute dynamic edge styles
   const animatedEdges = edges.map(e => {
@@ -285,18 +311,7 @@ const FlowCanvas = () => {
           )}
         >
           <RotateCcw size={18} />
-          Reset
-        </button>
-        <button
-          onClick={runWorkflow}
-          disabled={isExecuting}
-          className={cn(
-            "px-2 py-3 rounded-full font-semibold text-white flex items-center gap-2 transition-all shadow-xl",
-            isExecuting ? "bg-neutral-800 cursor-not-allowed text-neutral-500" : "bg-white text-black hover:bg-neutral-200 hover:scale-105 active:scale-95"
-          )}
-        >
-          {isExecuting ? <Loader2 className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
-          {isExecuting ? "Executing..." : "Execute Workflow"}
+          Reset & Run
         </button>
       </div>
     </div>
@@ -329,11 +344,10 @@ export const StepperSection = () => {
         </div>
 
         <AnimatedStepper
+          hideFooter={true}
           onFinalStepCompleted={() => {
             console.log("Stepper completed");
           }}
-          backButtonText="Back"
-          nextButtonText="Next"
           stepCircleContainerClassName="max-w-4xl"
         >
           <Step title="Step 1: Describe goal">

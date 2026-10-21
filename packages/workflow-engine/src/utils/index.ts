@@ -42,3 +42,6 @@ export const topologicalSort = (
   const nodeMap = new Map(nodes.map((node) => [node.id, node]));
   return sortedNodeIds.map((id) => nodeMap.get(id)).filter(Boolean) as Node[];
 };
+
+export * from "./template.js";
+

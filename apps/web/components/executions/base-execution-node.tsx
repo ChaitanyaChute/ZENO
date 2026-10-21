@@ -65,12 +65,12 @@ export const BaseExecutionNode = memo(
               )}
               {children}
               <BaseHandle
-                id="target-1"
+                id="main"
                 type="target"
                 position={Position.Left}
               />
               <BaseHandle
-                id="source-1"
+                id="main"
                 type="source"
                 position={Position.Right}
               />

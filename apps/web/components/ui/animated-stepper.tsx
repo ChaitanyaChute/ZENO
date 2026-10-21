@@ -5,6 +5,20 @@ import { motion, AnimatePresence, Variants } from 'motion/react';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+export const StepperContext = React.createContext<{
+  currentStep: number;
+  nextStep: () => void;
+  prevStep: () => void;
+  setStep: (step: number) => void;
+}>({
+  currentStep: 1,
+  nextStep: () => {},
+  prevStep: () => {},
+  setStep: () => {},
+});
+
+export const useStepper = () => React.useContext(StepperContext);
+
 interface StepperProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   initialStep?: number;
@@ -24,6 +38,7 @@ interface StepperProps extends HTMLAttributes<HTMLDivElement> {
     currentStep: number;
     onStepClick: (clicked: number) => void;
   }) => ReactNode;
+  hideFooter?: boolean;
 }
 
 export function AnimatedStepper({
@@ -41,6 +56,7 @@ export function AnimatedStepper({
   nextButtonText = 'Continue',
   disableStepIndicators = false,
   renderStepIndicator,
+  hideFooter = false,
   ...rest
 }: StepperProps) {
   const [currentStep, setCurrentStep] = useState<number>(initialStep);
@@ -79,10 +95,11 @@ export function AnimatedStepper({
   };
 
   return (
-    <div
-      className={cn("flex min-h-[400px] w-full flex-col items-center justify-center p-4 sm:p-8", rest.className)}
-      {...rest}
-    >
+    <StepperContext.Provider value={{ currentStep, nextStep: handleNext, prevStep: handleBack, setStep: updateStep }}>
+      <div
+        className={cn("flex min-h-[400px] w-full flex-col items-center justify-center p-4 sm:p-8", rest.className)}
+        {...rest}
+      >
       <div
         className={cn("mx-auto w-full max-w-lg overflow-hidden rounded-[2.5rem] bg-neutral-900 border border-neutral-800 shadow-2xl", stepCircleContainerClassName)}
       >
@@ -124,13 +141,13 @@ export function AnimatedStepper({
           isCompleted={isCompleted}
           currentStep={currentStep}
           direction={direction}
-          className={cn("space-y-4 px-8", contentClassName)}
+          className={cn("space-y-4 px-8", hideFooter && "pb-8", contentClassName)}
         >
           {stepsArray[currentStep - 1]}
         </StepContentWrapper>
 
         {/* Footer Actions */}
-        {!isCompleted && (
+        {!isCompleted && !hideFooter && (
           <div className={cn("px-8 pb-8 pt-4", footerClassName)}>
             <div className={cn("flex items-center", currentStep !== 1 ? 'justify-between' : 'justify-end')}>
               {currentStep !== 1 && (
@@ -156,6 +173,7 @@ export function AnimatedStepper({
         )}
       </div>
     </div>
+    </StepperContext.Provider>
   );
 }
 

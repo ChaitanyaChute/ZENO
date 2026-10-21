@@ -5,10 +5,40 @@ import { useWorkflowsParams } from "./use-workflows-params";
 
 const API_URL = "/api";
 
-const apiClient = axios.create({
+export const apiClient = axios.create({
   baseURL: "/api/workflows",
   withCredentials: true,
 });
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        await axios.post("/api/auth/refresh", {}, { withCredentials: true });
+        
+        try {
+          return await apiClient(originalRequest);
+        } catch (retryError: any) {
+          if (retryError.response?.status === 401 && typeof window !== "undefined") {
+            window.location.href = "/login?error=session_expired";
+            return new Promise(() => {}); // Suspend forever while navigating
+          }
+          return Promise.reject(retryError);
+        }
+      } catch (refreshError) {
+        if (typeof window !== "undefined") {
+          window.location.href = "/login?error=session_expired";
+          return new Promise(() => {}); // Suspend forever while navigating
+        }
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 /**
  * Hook to fetch all workflows using suspense

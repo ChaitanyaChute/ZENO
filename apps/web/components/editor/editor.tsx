@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { apiClient } from "@/hooks/workflow/use-workflows";
 import {
   ReactFlow,
   applyNodeChanges,
@@ -23,6 +25,7 @@ import { useSetAtom } from "jotai";
 import { editorAtom } from "@/lib/atoms";
 import { nodeComponents } from "@/config/node-components";
 import { AddNodeButton } from "./add-node-button";
+import { AiChat } from "./ai-chat";
 import { Button } from "@/components/ui/button";
 
 const initialNodes: Node[] = [
@@ -55,6 +58,29 @@ export const Editor = ({
 
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const memoizedNodeTypes = useMemo(() => nodeComponents, []);
+
+  const { data: workflow, isLoading } = useQuery({
+    queryKey: ['workflow', workflowId],
+    queryFn: async () => {
+      const { data } = await apiClient.get(`/${workflowId}`);
+      return data;
+    },
+    enabled: workflowId !== "new"
+  });
+
+  useEffect(() => {
+    if (workflow) {
+      if (workflow.nodes?.length > 0) {
+        setNodes(workflow.nodes);
+      } else {
+        setNodes(initialNodes);
+      }
+      if (workflow.edges?.length >= 0) {
+        setEdges(workflow.edges);
+      }
+    }
+  }, [workflow]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
@@ -94,7 +120,7 @@ export const Editor = ({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        nodeTypes={nodeComponents}
+        nodeTypes={memoizedNodeTypes}
         onInit={setEditor}
         fitView
         fitViewOptions={{ maxZoom: 1.5 }}
@@ -106,6 +132,9 @@ export const Editor = ({
         <Background color="#333" />
         <Controls style={{ backgroundColor: '#000', borderColor: '#333' }} />
         <MiniMap nodeColor="#333" style={{ backgroundColor: '#000', maskType: 'alpha' }} />
+
+        {/* AI Chat Panel */}
+        <AiChat workflowId={workflowId} />
 
         {/* Top Right Buttons */}
         <Panel position="top-right">
